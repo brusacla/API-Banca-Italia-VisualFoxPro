@@ -12,6 +12,83 @@
 && di questo file.prg, inoltre in questa maniera abbiamo anche una classe su cui lavorare meglio
 
 
+Define Class BancaItaliaApi As Custom
+	** Url Base Address
+	UrlBancaItalia	 = "https://tassidicambio.bancaditalia.it/terzevalute-wf-web/rest/v1.0"
+
+	** Oggetto per il collegamento Http
+	Http		= Null
+
+	** Json Result Object
+	JSonResult	= Null
+	
+	&& Creazione oggetto richieste HTTP
+	Function Init()
+		This.Http = Createobject("MSXML2.XMLHTTP.6.0")
+	EndFunc
+
+	&& Oggetto Http tipo GET	
+	Function HttpOpenGet(cApi)
+		This.Http.Open("GET", This.UrlBancaItalia + '\' +cApi ,.F.)
+	ENDFUNC
+
+	*Ultimi Cambi
+	FUNCTION LatestRates(cLang)
+		*Fornisce i cambi, contro Euro e contro dollaro Usa, dell'ultimo giorno per cui sono disponibili le quotazioni
+		*tra tutte le valute in corso.
+		*GET /latestRates?lang={}
+		Local cResult, cSend
+		cSend  = '?lang='+cLang
+
+		With This
+			.HttpOpenGet('latestRates')
+			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.Send()
+			cResult = .Http.ResponseText
+		EndWith
+	
+		This.JsonResult = JSonParser(cResult)		
+		
+		Return This.JsonResult
+	ENDFUNC 	
+	
+	Function ListCurrencies()
+		Local cResult
+
+		With This
+			.HttpOpenGet('currencies')
+			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.Send()
+			cResult = .Http.ResponseText
+		EndWith
+	
+		This.JsonResult 	= JSonParser(cResult)		
+		Return This.JsonResult
+	ENDFUNC 
+	
+	Function DailyRates(referenceDate,baseCurrencyIsoCode,currencyIsoCode,lang)
+		Local  cResult, cSend
+		
+		cSend = '?referenceDate='+referenceDate+;
+				'&baseCurrencyIsoCode='+baseCurrencyIsoCode+;
+				'&currencyIsoCode='+currencyIsoCode+;
+				'&lang='+lang
+		With This
+			.HttpOpenGet('dailyRates'+cSend)
+			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.SetRequestHeader("Accept","application/json")
+			.Http.Send()
+			cResult = .Http.ResponseText
+		EndWith
+	
+		This.JsonResult 	= JSonParser(cResult)		
+		Return This.JsonResult
+	ENDFUNC 	
+	
+
+	
+ENDDEFINE && fine Define Class BancaItaliaApi As Custom
+
 
 && Definizione classe per il parsing JSON da qui in poi non toccare nulla
 Define Class NFJSon_Class As Session
