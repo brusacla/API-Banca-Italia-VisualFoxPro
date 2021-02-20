@@ -11,6 +11,15 @@
 && La funzione è stata incapsulata nella classe NFJSon_Class in modo tale da avere tutto all'interno
 && di questo file.prg, inoltre in questa maniera abbiamo anche una classe su cui lavorare meglio
 
+&& JSonParser è utilizzata dall'interno della classe BancaItaliaApi 
+Function JSonParser(cJsonData)
+	Local oRet
+	With CreateObject('NFJSon_Class')
+		oRet = .NFJSonRead(cJsonData)
+	EndWith	
+	Return oRet
+EndFunc
+
 
 Define Class BancaItaliaApi As Custom
 	** Url Base Address
@@ -42,6 +51,54 @@ Define Class BancaItaliaApi As Custom
 
 		With This
 			.HttpOpenGet('latestRates')
+			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.Send()
+			cResult = .Http.ResponseText
+		EndWith
+	
+		This.JsonResult = JSonParser(cResult)		
+		
+		Return This.JsonResult
+	ENDFUNC 
+	
+	*Cambi Giornalieri
+	FUNCTION DailyExchangeRates(cDate,cBaseCurrency,cVsCurrency,cLang)
+		*Fornisce i cambi giornalieri per una specifica data, contro Euro o contro Dollaro USA o contro Lira Italiana,
+		*di una o più valute richieste, che siano valide e per le quali sia disponibile la quotazione per la data
+		*selezionata. E' possibile non specificare le valute desiderate, in tal caso il servizio restituisce tutte le valute
+		*quotate. Qualora, per la data e le valute richieste, non esistano quotazioni, il servizio restituisce l'elenco
+		*vuoto con un messaggio informativo.
+		*GET /dailyRates?referenceDate={}[&baseCurrencyIsoCode={}]&currencyIsoCode={}&lang={}
+		
+		Local cResult, cSend
+		cSend  ='?referenceDate='+cDate+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
+
+		With This
+			.HttpOpenGet('dailyRates')
+			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.Send()
+			cResult = .Http.ResponseText
+		EndWith
+	
+		This.JsonResult = JSonParser(cResult)		
+		
+		Return This.JsonResult
+	ENDFUNC 
+	
+	*Cambi Giornalieri
+	FUNCTION DailyExchangeRates(cDate,cBaseCurrency,cVsCurrency,cLang)
+		*Fornisce i cambi giornalieri per una specifica data, contro Euro o contro Dollaro USA o contro Lira Italiana,
+		*di una o più valute richieste, che siano valide e per le quali sia disponibile la quotazione per la data
+		*selezionata. E' possibile non specificare le valute desiderate, in tal caso il servizio restituisce tutte le valute
+		*quotate. Qualora, per la data e le valute richieste, non esistano quotazioni, il servizio restituisce l'elenco
+		*vuoto con un messaggio informativo.
+		*GET /dailyRates?referenceDate={}[&baseCurrencyIsoCode={}]&currencyIsoCode={}&lang={}
+		
+		Local cResult, cSend
+		cSend  ='?referenceDate='+cDate+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
+
+		With This
+			.HttpOpenGet('dailyRates')
 			.Http.SetRequestHeader("Content-Type","application/json")
 			.Http.Send()
 			cResult = .Http.ResponseText
