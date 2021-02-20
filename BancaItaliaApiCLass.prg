@@ -85,20 +85,44 @@ Define Class BancaItaliaApi As Custom
 		Return This.JsonResult
 	ENDFUNC 
 	
-	*Cambi Giornalieri
-	FUNCTION DailyExchangeRates(cDate,cBaseCurrency,cVsCurrency,cLang)
-		*Fornisce i cambi giornalieri per una specifica data, contro Euro o contro Dollaro USA o contro Lira Italiana,
-		*di una o più valute richieste, che siano valide e per le quali sia disponibile la quotazione per la data
-		*selezionata. E' possibile non specificare le valute desiderate, in tal caso il servizio restituisce tutte le valute
-		*quotate. Qualora, per la data e le valute richieste, non esistano quotazioni, il servizio restituisce l'elenco
-		*vuoto con un messaggio informativo.
-		*GET /dailyRates?referenceDate={}[&baseCurrencyIsoCode={}]&currencyIsoCode={}&lang={}
+	*Cambi Medi Mensili
+	FUNCTION AverageMonthlyExchangeRates(cMonth,cYear,cBaseCurrency,cVsCurrency,cLang)
+		*Fornisce i cambi medi mensili per uno specifico mese/anno, contro Euro o contro Dollaro USA o contro Lira
+        *Italiana, di una o più valute richieste, che siano valide e per le quali sia disponibile la quotazione. E'
+        *possibile non specificare le valute desiderate, in tal caso il servizio restituisce tutte le valute quotate.
+        *Qualora, per il mese e le valute richieste, non esistano quotazioni, il servizio restituirà un elenco vuoto.
+        *GET
+        */monthlyAverageRates?month={}&year={}[&baseCurrencyIsoCode={}]&currencyIsoCode={}&lang={}
 		
 		Local cResult, cSend
-		cSend  ='?referenceDate='+cDate+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
+		cSend  ='?month='+cMonth+'&year='+cYear+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
 
 		With This
-			.HttpOpenGet('dailyRates')
+			.HttpOpenGet('monthlyAverageRates')
+			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.Send()
+			cResult = .Http.ResponseText
+		EndWith
+	
+		This.JsonResult = JSonParser(cResult)		
+		
+		Return This.JsonResult
+	ENDFUNC 
+
+    *Cambi Medi Annuali
+	FUNCTION AnnualAverageExchangeRates(cYear,cBaseCurrency,cVsCurrency,cLang)
+		*Fornisce i cambi medi annuali per uno specifico anno, contro Euro o contro Dollaro USA o contro Lira
+        *Italiana, di una o più valute richieste, che siano valide e per le quali sia disponibile la quotazione per il mese
+        *selezionato. E' possibile non specificare le valute desiderate, in tal caso il servizio restituisce tutte le valute
+        *quotate. Qualora, per l’anno e le valute richieste, non esistano quotazioni, il servizio restituirà un elenco
+        *vuoto.
+        *GET /annualAverageRates?year={}&[baseCurrencyIsoCode={}]&currencyIsoCode={}&lang={}
+		
+		Local cResult, cSend
+		cSend  ='?&year='+cYear+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
+
+		With This
+			.HttpOpenGet('annualAverageRates')
 			.Http.SetRequestHeader("Content-Type","application/json")
 			.Http.Send()
 			cResult = .Http.ResponseText
@@ -109,8 +133,13 @@ Define Class BancaItaliaApi As Custom
 		Return This.JsonResult
 	ENDFUNC 	
 	
-	Function ListCurrencies()
-		Local cResult
+    *Elenco Valute
+	Function ListCurrencies(cLang)
+        *Returns a list of all currencies, including expired currencies.
+        *GET /currencies?lang={}
+
+		Local cResult, cSend
+        cSend  ='?lang='+cLang
 
 		With This
 			.HttpOpenGet('currencies')
@@ -122,27 +151,6 @@ Define Class BancaItaliaApi As Custom
 		This.JsonResult 	= JSonParser(cResult)		
 		Return This.JsonResult
 	ENDFUNC 
-	
-	Function DailyRates(referenceDate,baseCurrencyIsoCode,currencyIsoCode,lang)
-		Local  cResult, cSend
-		
-		cSend = '?referenceDate='+referenceDate+;
-				'&baseCurrencyIsoCode='+baseCurrencyIsoCode+;
-				'&currencyIsoCode='+currencyIsoCode+;
-				'&lang='+lang
-		With This
-			.HttpOpenGet('dailyRates'+cSend)
-			.Http.SetRequestHeader("Content-Type","application/json")
-			.Http.SetRequestHeader("Accept","application/json")
-			.Http.Send()
-			cResult = .Http.ResponseText
-		EndWith
-	
-		This.JsonResult 	= JSonParser(cResult)		
-		Return This.JsonResult
-	ENDFUNC 	
-	
-
 	
 ENDDEFINE && fine Define Class BancaItaliaApi As Custom
 
