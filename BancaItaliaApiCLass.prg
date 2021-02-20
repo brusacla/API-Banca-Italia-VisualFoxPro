@@ -38,7 +38,7 @@ Define Class BancaItaliaApi As Custom
 
 	&& Oggetto Http tipo GET	
 	Function HttpOpenGet(cApi)
-		This.Http.Open("GET", This.UrlBancaItalia + '\' +cApi ,.F.)
+		This.Http.Open("GET", This.UrlBancaItalia + '/' +cApi ,.F.)
 	ENDFUNC
 
 	*Ultimi Cambi
@@ -50,8 +50,9 @@ Define Class BancaItaliaApi As Custom
 		cSend  = '?lang='+cLang
 
 		With This
-			.HttpOpenGet('latestRates')
+			.HttpOpenGet('latestRates'+cSend)
 			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.SetRequestHeader("Accept","application/json")
 			.Http.Send()
 			cResult = .Http.ResponseText
 		EndWith
@@ -74,8 +75,9 @@ Define Class BancaItaliaApi As Custom
 		cSend  ='?referenceDate='+cDate+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
 
 		With This
-			.HttpOpenGet('dailyRates')
+			.HttpOpenGet('dailyRates'+cSend)
 			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.SetRequestHeader("Accept","application/json")			
 			.Http.Send()
 			cResult = .Http.ResponseText
 		EndWith
@@ -98,8 +100,9 @@ Define Class BancaItaliaApi As Custom
 		cSend  ='?month='+cMonth+'&year='+cYear+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
 
 		With This
-			.HttpOpenGet('monthlyAverageRates')
+			.HttpOpenGet('monthlyAverageRates'+cSend)
 			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.SetRequestHeader("Accept","application/json")			
 			.Http.Send()
 			cResult = .Http.ResponseText
 		EndWith
@@ -122,8 +125,9 @@ Define Class BancaItaliaApi As Custom
 		cSend  ='?&year='+cYear+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
 
 		With This
-			.HttpOpenGet('annualAverageRates')
+			.HttpOpenGet('annualAverageRates'+cSend)
 			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.SetRequestHeader("Accept","application/json")			
 			.Http.Send()
 			cResult = .Http.ResponseText
 		EndWith
@@ -147,8 +151,9 @@ Define Class BancaItaliaApi As Custom
 
 
 		With This
-			.HttpOpenGet('dailyTimeSeries')
+			.HttpOpenGet('dailyTimeSeries'+cSend)
 			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.SetRequestHeader("Accept","application/json")			
 			.Http.Send()
 			cResult = .Http.ResponseText
 		EndWith
@@ -172,8 +177,9 @@ Define Class BancaItaliaApi As Custom
 
 
 		With This
-			.HttpOpenGet('monthlyTimeSeries')
+			.HttpOpenGet('monthlyTimeSeries'+cSend)
 			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.SetRequestHeader("Accept","application/json")			
 			.Http.Send()
 			cResult = .Http.ResponseText
 		EndWith
@@ -193,12 +199,13 @@ Define Class BancaItaliaApi As Custom
 		*/annualTimeSeries?startYear={}&endYear={}&baseCurrencyIsoCode={}&currencyIsoCode={}&lang={}
 		
 		Local cResult, cSend
-		cSend  ='?startYear='+'&endYear='+cYearOut+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
+		cSend  ='?startYear='+cYearIn+'&endYear='+cYearOut+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
 
 
 		With This
-			.HttpOpenGet('monthlyTimeSeries')
+			.HttpOpenGet('annualTimeSeries'+cSend)
 			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.SetRequestHeader("Accept","application/json")			
 			.Http.Send()
 			cResult = .Http.ResponseText
 		EndWith
@@ -217,8 +224,9 @@ Define Class BancaItaliaApi As Custom
         cSend  ='?lang='+cLang
 
 		With This
-			.HttpOpenGet('currencies')
+			.HttpOpenGet('currencies'+cSend)
 			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.SetRequestHeader("Accept","application/json")			
 			.Http.Send()
 			cResult = .Http.ResponseText
 		EndWith
