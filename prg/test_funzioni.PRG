@@ -1,7 +1,7 @@
 Set Procedure To "BancaItaliaApiClass.prg"
 oBancaItalia = CreateObject("BancaItaliaApi")
 
-&& Esempi per richieste più comuni
+&& Esempi per richieste piÃ¹ comuni
 * Elenco delle valute
 ListaValute = oBancaItalia.ListCurrencies('it')
         
@@ -16,11 +16,11 @@ ValutaFrom	= 'USD'
 ValutaTo 	= 'EUR'
 Lingua 		= 'it'
 DataInizio	= '2020-01-01'
-DataFine		= '2020-12-31'
+DataFine	= '2020-12-31'
 MeseInizio	= '01'
-MeseFine		= '12'
+MeseFine	= '12'
 AnnoInizio	= '2000'
-AnnoFine		= '2020'
+AnnoFine	= '2020'
 
 
 UltimiCambi = oBancaItalia.LatestRates(Lingua)
@@ -38,5 +38,3 @@ CambiMediMensiliSerieStoriche = oBancaItalia.MonthlyExchangeRatesTimeSeries(Mese
 CambiMediAnnualiSerieStoriche = oBancaItalia.AnnualAverageExchangeRatesTimeSeries(AnnoInizio, AnnoFine, ValutaFrom,ValutaTo,Lingua)	
 
 ElencoValute = oBancaItalia.ListCurrencies(Lingua)	
-
-SUSPEND 
