@@ -132,7 +132,82 @@ Define Class BancaItaliaApi As Custom
 		
 		Return This.JsonResult
 	ENDFUNC 	
+
+	*Cambi Giornalieri – Serie Storiche
+	FUNCTION DailyExchangeRatesTimeSeries(cDataIn,cDataOut,cBaseCurrency,cVsCurrency,cLang)
+		*Fornisce i cambi giornalieri di una valuta per un intervallo di date specificato. La valuta controvalore può
+		*essere Euro, Dollaro USA o Lira Italiana. In assenza di quotazioni per l'intervallo fornito, il servizio restituirà
+		*un elenco vuoto. La data di fine non può essere antecedente quella di inizio, altrimenti sarà restituito un
+		*messaggio di errore.
+		*E' consentita l'interrogazione su dati storici a partire dal 1918.
+		*GET /dailyTimeSeries?startDate={}&endDate={}&baseCurrencyIsoCode={}&currencyIsoCode={}&lang={}
+		
+		Local cResult, cSend
+		cSend  ='?startDate='+cDataIn+'&endDate='+cDataOut+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
+
+
+		With This
+			.HttpOpenGet('dailyTimeSeries')
+			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.Send()
+			cResult = .Http.ResponseText
+		EndWith
 	
+		This.JsonResult = JSonParser(cResult)		
+		
+		Return This.JsonResult
+	ENDFUNC 	
+
+	*Cambi Medi Mensili – Serie Storiche
+	FUNCTION MonthlyExchangeRatesTimeSeries(cMonthIn,cYearIn, cMonthOut, cYearOut, cBaseCurrency,cVsCurrency,cLang)
+		*Fornisce i cambi medi mensili di una valuta per un intervallo di mesi specificato. La valuta controvalore può
+		*essere Euro, Dollaro USA o Lira Italiana. In assenza di quotazioni per l'intervallo fornito, il servizio restituirà
+		*un elenco vuoto. Il mese di inizio non può essere successivo a quello finale, altrimenti sarà restituito un
+		*messaggio di errore.
+		*GET
+		*/monthlyTimeSeries?startMonth={}&startYear={}&endMonth={}&endYear={}&baseCurrencyIsoCode={}&currencyIsoCode={}&lang={}
+		
+		Local cResult, cSend
+		cSend  ='?startMonth='+cMonthIn+'&startYear='+cYearIn+'&endMonth='+cMonthOut+'&endYear='+cYearOut+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
+
+
+		With This
+			.HttpOpenGet('monthlyTimeSeries')
+			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.Send()
+			cResult = .Http.ResponseText
+		EndWith
+	
+		This.JsonResult = JSonParser(cResult)		
+		
+		Return This.JsonResult
+	ENDFUNC 
+
+	*Cambi Medi Annuali – Serie Storiche
+	FUNCTION AnnualAverageExchangeRatesTimeSeries(cYearIn, cYearOut, cBaseCurrency,cVsCurrency,cLang)
+		*Fornisce i cambi medi annuali di una valuta, per un intervallo di anni specificato. La valuta controvalore può
+		*essere Euro, Dollaro USA o Lira Italiana. In assenza di quotazioni per l'intervallo fornito, il servizio restituirà
+		*un elenco vuoto. L’anno di inizio non può essere successivo a quello finale, altrimenti sarà restituito un
+		*messaggio di errore.
+		*GET
+		*/annualTimeSeries?startYear={}&endYear={}&baseCurrencyIsoCode={}&currencyIsoCode={}&lang={}
+		
+		Local cResult, cSend
+		cSend  ='?startYear='+'&endYear='+cYearOut+'&baseCurrencyIsoCode='+cBaseCurrency+'&currencyIsoCode='+cVsCurrency+'&lang='+cLang
+
+
+		With This
+			.HttpOpenGet('monthlyTimeSeries')
+			.Http.SetRequestHeader("Content-Type","application/json")
+			.Http.Send()
+			cResult = .Http.ResponseText
+		EndWith
+	
+		This.JsonResult = JSonParser(cResult)		
+		
+		Return This.JsonResult
+	ENDFUNC 	
+
     *Elenco Valute
 	Function ListCurrencies(cLang)
         *Returns a list of all currencies, including expired currencies.
